@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <title>执业体验调研</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #2d5a2d;
+      --green-mid: #4a7a4a;
+      --green-light: #e8f4e8;
+      --green-border: #8aaa6a;
+      --amber: #c8a840;
+      --paper: #f5f3ee;
+      --border: #d8d4c8;
+      --red: #c84040;
+      --font-serif: 'Georgia', serif;
+      --font-mono: 'Courier New', monospace;
+    }
+    body { font-family: var(--font-serif); background: var(--paper); color: #1a1a14; min-height: 100vh; }
+    .container { max-width: 640px; margin: 0 auto; padding: 3rem 1.25rem; }
+    .label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.75rem; }
+    h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; color: #1a1a14; }
+    .subtitle { font-size: 0.875rem; color: #6a6a5a; margin-bottom: 2rem; }
+    .prompt-card { border: 1px solid var(--border); border-left: 3px solid var(--green); background: white; border-radius: 2px; padding: 1.25rem; margin-bottom: 1.5rem; }
+    .prompt-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-mid); margin-bottom: 0.5rem; }
+    .prompt-text { font-size: 1rem; line-height: 1.7; color: #1a1a14; }
+    .field-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .field-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-mid); }
+    .word-count { font-family: var(--font-mono); font-size: 0.65rem; }
+    textarea { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 2px; font-family: var(--font-serif); font-size: 0.95rem; line-height: 1.75; resize: none; outline: none; background: white; transition: border-color 0.15s; }
+    textarea:focus { border-color: var(--green-border); }
+    .progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 2px; transition: width 0.3s, background 0.3s; }
+    .hint { font-family: var(--font-mono); font-size: 0.62rem; color: #8a8a7a; margin: 0.5rem 0 1.25rem; }
+    .incentive-box { background: var(--green-light); border: 1px solid var(--green-border); border-radius: 2px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; display: flex; gap: 0.5rem; align-items: flex-start; }
+    .incentive-text { font-size: 0.8rem; line-height: 1.5; color: var(--green); }
+    .submit-btn { width: 100%; padding: 0.75rem; border: none; border-radius: 2px; font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s, transform 0.1s; }
+    .submit-btn:active { transform: scale(0.99); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .error-box { background: #fdf4f4; border: 1px solid #e8a0a0; border-radius: 2px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.875rem; color: #8a2020; display: none; }
+    .footer-note { text-align: center; font-family: var(--font-mono); font-size: 0.6rem; color: #8a8a7a; margin-top: 1.5rem; }
+    #success-page { display: none; }
+    .success-icon { width: 56px; height: 56px; border-radius: 50%; background: var(--green-light); border: 2px solid var(--green-border); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 1.5rem; }
+    .success-title { text-align: center; font-size: 1.25rem; font-weight: 600; color: var(--green); margin-bottom: 0.5rem; }
+    .success-sub { text-align: center; font-size: 0.875rem; color: #6a6a5a; margin-bottom: 2rem; }
+    .feedback-card { border: 1px solid var(--green-border); border-radius: 2px; overflow: hidden; margin-bottom: 1.25rem; }
+    .feedback-header { padding: 0.6rem 1rem; background: var(--green-light); border-bottom: 1px solid var(--green-border); display: flex; align-items: center; gap: 0.5rem; }
+    .feedback-header-title { font-size: 0.875rem; font-weight: 600; color: var(--green); }
+    .feedback-header-sub { font-family: var(--font-mono); font-size: 0.6rem; color: #6a6a5a; margin-left: auto; }
+    .feedback-body { padding: 0.875rem 1rem; background: white; font-size: 0.875rem; line-height: 1.7; max-height: 320px; overflow-y: auto; white-space: pre-wrap; }
+    .feedback-loading { padding: 1.25rem 1rem; display: flex; align-items: center; gap: 0.5rem; color: #6a6a5a; font-size: 0.8rem; font-family: var(--font-mono); }
+    .dot-anim { display: inline-flex; gap: 3px; }
+    .dot-anim span { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); animation: blink 1.2s infinite; }
+    .dot-anim span:nth-child(2) { animation-delay: 0.2s; }
+    .dot-anim span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink { 0%,100%{opacity:0.3} 50%{opacity:1} }
+    .group-card { border: 1px solid var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 1.25rem; }
+    .group-header { padding: 0.6rem 1rem; background: var(--paper); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem; }
+    .group-title { font-size: 0.875rem; font-weight: 600; color: #3a3a2a; }
+    .group-pending { font-family: var(--font-mono); font-size: 0.6rem; color: var(--amber); margin-left: auto; }
+    .group-body { padding: 0.875rem 1rem; background: white; font-size: 0.8rem; line-height: 1.6; color: #6a6a5a; }
+    .group-placeholder { height: 64px; background: #f4f2ec; border: 1px dashed var(--border); border-radius: 2px; margin-top: 0.75rem; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.65rem; color: #8a8a7a; }
+    #loading-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .spinner { width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #error-page { display: none; text-align: center; padding: 4rem 1.25rem; }
+  </style>
+</head>
+<body>
+
+<div id="loading-page"><div class="spinner"></div></div>
+
+<div id="error-page">
+  <div style="font-size:2rem;margin-bottom:1rem;">⚠️</div>
+  <h2 id="error-title" style="font-size:1.125rem;margin-bottom:0.5rem;">链接无效</h2>
+  <p id="error-msg" style="font-size:0.875rem;color:#6a6a5a;">该链接无效或已过期，请联系研究者获取新的链接。</p>
+</div>
+
+<div id="survey-page" style="display:none">
+  <div class="container">
+    <div class="label">私人执业咨询师成长研究</div>
+    <h1 id="survey-title">执业体验调研</h1>
+    <p class="subtitle">本调研匿名进行，完成后将收到一份基于您回答的个人执业画像。</p>
+    <div class="prompt-card">
+      <div class="prompt-label">题目</div>
+      <p class="prompt-text" id="prompt-text"></p>
+    </div>
+    <div class="field-header">
+      <span class="field-label">您的回答</span>
+      <span class="word-count" id="word-count-display" style="color:#c8a840">0 字 / 建议 30—300 字</span>
+    </div>
+    <textarea id="answer-input" rows="10" placeholder="请在此输入您的回答……"></textarea>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%;background:#c8a840"></div></div>
+    <p class="hint">请直接描述您的真实体验，无需修饰或解释。不超过 300 字。</p>
+    <div class="incentive-box">
+      <span style="color:#c8a840;flex-shrink:0;margin-top:2px">✦</span>
+      <p class="incentive-text">提交后，您将立即收到一份基于您回答的<strong>个人执业画像</strong>（AI 即时生成），以及关于<strong>群体分布对比</strong>的说明（数据收集完成后补充）。</p>
+    </div>
+    <div class="error-box" id="submit-error"></div>
+    <button class="submit-btn" id="submit-btn" disabled style="background:#d8d4c8;color:#6a6a5a">提交并获取个人回馈</button>
+    <p class="footer-note">本调研匿名收集 · 数据仅用于研究目的 · 提交后不可修改</p>
+  </div>
+</div>
+
+<div id="success-page">
+  <div class="container">
+    <div class="success-icon">✓</div>
+    <h2 class="success-title">提交成功</h2>
+    <p class="success-sub" id="success-sub">感谢您的参与</p>
+    <div class="feedback-card">
+      <div class="feedback-header">
+        <span style="color:#c8a840">✦</span>
+        <span class="feedback-header-title" id="feedback-title">个人执业画像</span>
+        <span class="feedback-header-sub">即时生成 · 仅供参考</span>
+      </div>
+      <div id="feedback-loading" class="feedback-loading">
+        <div class="dot-anim"><span></span><span></span><span></span></div>
+        AI 正在生成您的个人回馈……
+      </div>
+      <div id="feedback-body" class="feedback-body" style="display:none"></div>
+    </div>
+    <div class="group-card">
+      <div class="group-header">
+        <span style="color:#4a7a4a;font-size:0.9rem">▦</span>
+        <span class="group-title" id="group-title">群体分布对比</span>
+        <span class="group-pending">⏱ 待数据收集完成后补充</span>
+      </div>
+      <div class="group-body">
+        <span id="group-desc"></span>
+        <div class="group-placeholder">群体分布图将在此处显示</div>
+      </div>
+    </div>
+    <p class="footer-note">本调研匿名收集 · 数据仅用于研究目的 · 如有疑问请联系研究者</p>
+  </div>
+</div>
+
+<script>
+// ── CONFIG: 主站 API 地址（部署后填入实际地址）──────────────────────────────
+var API_BASE = 'https://therapisttool-anfd8v4p.manus.space/api/trpc';
+// Survey host (this page's own domain)
+var SURVEY_HOST = 'https://privatepractice.psystudy2026.workers.dev';
+// ─────────────────────────────────────────────────────────────────────────────
+
+(function() {
+  // Read token from query param ?t=TOKEN (works on Cloudflare Workers static assets)
+  var params = new URLSearchParams(window.location.search);
+  var token = params.get('t') || '';
+  if (!token) {
+    // Fallback: also support /s/TOKEN path format
+    var pathParts = window.location.pathname.split('/').filter(Boolean);
+    if (pathParts.length >= 2 && pathParts[0] === 's') {
+      token = pathParts[1];
+    }
+  }
+
+  function countWords(text) {
+    var chinese = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
+    var english = (text.match(/\b[a-zA-Z]+\b/g) || []).length;
+    return chinese + english;
+  }
+
+  async function trpcQuery(procedure, input) {
+    var url = API_BASE + '/' + procedure + '?input=' + encodeURIComponent(JSON.stringify({ json: input }));
+    var res = await fetch(url, { credentials: 'omit' });
+    var json = await res.json();
+    if (json.error) throw new Error(json.error.message || 'Request failed');
+    return json.result && json.result.data && json.result.data.json !== undefined
+      ? json.result.data.json : (json.result && json.result.data);
+  }
+
+  async function trpcMutate(procedure, input) {
+    var res = await fetch(API_BASE + '/' + procedure, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'omit',
+      body: JSON.stringify({ json: input }),
+    });
+    var json = await res.json();
+    if (json.error) throw new Error(json.error.message || 'Request failed');
+    return json.result && json.result.data && json.result.data.json !== undefined
+      ? json.result.data.json : (json.result && json.result.data);
+  }
+
+  var STAGE_FEEDBACK = {
+    '01': { personal: '个人执业画像', group: '群体分布对比', groupDesc: '基于所有参与者的回答数据，我们将生成一份"私人执业咨询师焦虑地图"，标注您的回答在整体分布中的匿名位置。数据收集完成后将统一发送。' },
+    '02': { personal: '临床样本分析', group: '行业分布图定位', groupDesc: '基于所有参与者的书面样本，我们将生成一份分布图，标注您的认知重构容忍度和情感容忍度在群体中的位置。数据收集完成后将统一发送。' },
+    '03': { personal: '小组体验观察', group: '小组工作匹配度说明', groupDesc: '基于本次体验的整体观察，我们将为每位参与者提供一份关于小组工作模式适配度的个人说明。数据收集完成后将统一发送。' },
+  };
+
+  var surveyData = null;
+
+  async function init() {
+    try {
+      var data = await trpcQuery('survey.getByToken', { token: token });
+      if (!data) { showError('问卷不存在', '该链接无效或已过期，请联系研究者获取新的链接。'); return; }
+      if (data.isActive === 'no') { showError('问卷已关闭', '该问卷已停止收集回答，感谢您的参与。'); return; }
+      surveyData = data;
+      document.getElementById('survey-title').textContent = data.displayTitle || '执业体验调研';
+      document.getElementById('prompt-text').textContent = data.prompt;
+      document.getElementById('loading-page').style.display = 'none';
+      document.getElementById('survey-page').style.display = 'block';
+    } catch(e) {
+      showError('加载失败', '无法加载问卷，请稍后重试或联系研究者。');
+    }
+  }
+
+  function showError(title, msg) {
+    document.getElementById('loading-page').style.display = 'none';
+    document.getElementById('error-title').textContent = title;
+    document.getElementById('error-msg').textContent = msg;
+    document.getElementById('error-page').style.display = 'block';
+  }
+
+  var textarea = document.getElementById('answer-input');
+  var submitBtn = document.getElementById('submit-btn');
+  var wordCountEl = document.getElementById('word-count-display');
+  var progressFill = document.getElementById('progress-fill');
+  var MIN = 30, MAX = 300;
+
+  textarea.addEventListener('input', function() {
+    var wc = countWords(this.value);
+    var pct = Math.min(wc / MAX * 100, 100);
+    var color = wc < MIN ? '#c8a840' : wc > MAX ? '#c84040' : '#2d5a2d';
+    wordCountEl.textContent = wc + ' 字 / 建议 ' + MIN + '—' + MAX + ' 字';
+    wordCountEl.style.color = color;
+    progressFill.style.width = pct + '%';
+    progressFill.style.background = color;
+    var canSubmit = wc >= MIN && wc <= MAX;
+    submitBtn.disabled = !canSubmit;
+    submitBtn.style.background = canSubmit ? '#2d5a2d' : '#d8d4c8';
+    submitBtn.style.color = canSubmit ? 'white' : '#6a6a5a';
+  });
+
+  submitBtn.addEventListener('click', async function() {
+    var answer = textarea.value.trim();
+    if (!answer) return;
+    submitBtn.disabled = true;
+    submitBtn.textContent = '提交中……';
+    document.getElementById('submit-error').style.display = 'none';
+    try {
+      var result = await trpcMutate('survey.submitAndGetId', { token: token, answer: answer });
+      showSuccess(result, answer);
+      if (result && result.responseId) {
+        generateFeedback(result.responseId, answer, result.stageNumber || '01');
+      }
+    } catch(e) {
+      document.getElementById('submit-error').textContent = e.message || '提交失败，请重试。';
+      document.getElementById('submit-error').style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = '提交并获取个人回馈';
+    }
+  });
+
+  function showSuccess(result, answer) {
+    document.getElementById('survey-page').style.display = 'none';
+    document.getElementById('success-page').style.display = 'block';
+    var stageKey = (result && result.stageNumber) || '01';
+    var fb = STAGE_FEEDBACK[stageKey] || STAGE_FEEDBACK['01'];
+    document.getElementById('success-sub').textContent = '共 ' + (result && result.wordCount || 0) + ' 字 · 感谢您的参与';
+    document.getElementById('feedback-title').textContent = fb.personal;
+    document.getElementById('group-title').textContent = fb.group;
+    document.getElementById('group-desc').textContent = fb.groupDesc;
+  }
+
+  async function generateFeedback(responseId, answer, stageNumber) {
+    try {
+      var result = await trpcMutate('survey.generateFeedback', { responseId: responseId, stageNumber: stageNumber, answer: answer });
+      document.getElementById('feedback-loading').style.display = 'none';
+      var body = document.getElementById('feedback-body');
+      body.style.display = 'block';
+      body.textContent = (result && result.feedback) || '';
+    } catch(e) {
+      document.getElementById('feedback-loading').innerHTML = '<span style="color:#c84040">回馈生成失败，请联系研究者。</span>';
+    }
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
