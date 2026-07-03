@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <title>执业困境共享 · 私人执业咨询师成长研究</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #2d5a2d;
+      --green-mid: #4a7a4a;
+      --green-light: #e8f4e8;
+      --green-border: #8aaa6a;
+      --amber: #c8a840;
+      --paper: #f5f3ee;
+      --border: #d8d4c8;
+      --font-serif: 'Georgia', serif;
+      --font-mono: 'Courier New', monospace;
+    }
+    body { font-family: var(--font-serif); background: var(--paper); color: #1a1a14; min-height: 100vh; }
+    .container { max-width: 720px; margin: 0 auto; padding: 3rem 1.25rem; }
+    .label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.75rem; }
+    h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .subtitle { font-size: 0.875rem; color: #6a6a5a; margin-bottom: 2rem; line-height: 1.6; }
+
+    /* Password gate */
+    #gate-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .gate-card { max-width: 420px; width: 100%; padding: 2rem; background: white; border: 1px solid var(--border); border-top: 3px solid var(--green); border-radius: 2px; }
+    .gate-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-mid); margin-bottom: 0.5rem; }
+    .gate-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .gate-desc { font-size: 0.8rem; color: #6a6a5a; margin-bottom: 1.5rem; line-height: 1.6; }
+    .gate-input { width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--border); border-radius: 2px; font-size: 0.875rem; outline: none; font-family: var(--font-mono); margin-bottom: 0.75rem; }
+    .gate-input:focus { border-color: var(--green-border); }
+    .gate-btn { width: 100%; padding: 0.7rem; background: var(--green); color: white; border: none; border-radius: 2px; font-family: var(--font-mono); font-size: 0.8rem; cursor: pointer; }
+    .gate-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .gate-error { font-size: 0.75rem; color: #c84040; font-family: var(--font-mono); margin-top: 0.5rem; display: none; }
+
+    /* Forum content */
+    #forum-page { display: none; }
+    .post-count { font-family: var(--font-mono); font-size: 0.72rem; color: var(--green-mid); margin-bottom: 1.5rem; letter-spacing: 0.05em; }
+
+    /* Post card */
+    .post-card { background: white; border: 1px solid var(--border); border-radius: 2px; margin-bottom: 1.5rem; overflow: hidden; }
+    .post-header { padding: 0.75rem 1.25rem; background: var(--paper); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .post-num { font-family: var(--font-mono); font-size: 0.65rem; color: var(--amber); }
+    .post-date { font-family: var(--font-mono); font-size: 0.62rem; color: #8a8a7a; }
+    .post-words { font-family: var(--font-mono); font-size: 0.62rem; color: #8a8a7a; }
+    .post-body { padding: 1.25rem; font-size: 0.9rem; line-height: 1.8; color: #1a1a14; white-space: pre-wrap; border-left: 3px solid var(--green-border); }
+    .post-step { }
+    .post-step-label { padding: 0.5rem 1.25rem 0; font-family: var(--font-mono); font-size: 0.65rem; color: var(--green-mid); letter-spacing: 0.04em; }
+
+    /* Comments section */
+    .comments-section { border-top: 1px solid var(--border); }
+    .comments-header { padding: 0.6rem 1.25rem; background: var(--green-light); font-family: var(--font-mono); font-size: 0.65rem; color: var(--green-mid); letter-spacing: 0.06em; text-transform: uppercase; }
+    .comment-item { padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border); }
+    .comment-item:last-child { border-bottom: none; }
+    .comment-date { font-family: var(--font-mono); font-size: 0.6rem; color: #8a8a7a; margin-bottom: 0.3rem; }
+    .comment-text { font-size: 0.85rem; line-height: 1.7; color: #2a2a1a; }
+    .no-comments { padding: 0.75rem 1.25rem; font-family: var(--font-mono); font-size: 0.65rem; color: #8a8a7a; }
+
+    /* Comment form */
+    .comment-form { padding: 1rem 1.25rem; background: var(--paper); border-top: 1px solid var(--border); }
+    .comment-form-label { font-family: var(--font-mono); font-size: 0.65rem; color: var(--green-mid); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.5rem; display: block; }
+    .comment-textarea { width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--border); border-radius: 2px; font-family: var(--font-serif); font-size: 0.875rem; line-height: 1.6; resize: none; outline: none; background: white; }
+    .comment-textarea:focus { border-color: var(--green-border); }
+    .comment-form-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
+    .comment-hint { font-family: var(--font-mono); font-size: 0.6rem; color: #8a8a7a; }
+    .comment-submit { padding: 0.5rem 1rem; background: var(--green); color: white; border: none; border-radius: 2px; font-family: var(--font-mono); font-size: 0.72rem; cursor: pointer; }
+    .comment-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .comment-success { font-family: var(--font-mono); font-size: 0.68rem; color: var(--green); margin-top: 0.5rem; display: none; }
+
+    .empty-state { text-align: center; padding: 4rem 1rem; color: #8a8a7a; font-family: var(--font-mono); font-size: 0.75rem; }
+    .section-header { margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--green-border); }
+    .section-label { font-size: 1rem; font-weight: 600; color: var(--green); font-family: Georgia, serif; margin-bottom: 0.25rem; }
+    .section-desc { font-size: 0.78rem; color: #6a6a5a; font-family: var(--font-mono); }
+    .footer-note { text-align: center; font-family: var(--font-mono); font-size: 0.6rem; color: #8a8a7a; margin-top: 2rem; }
+
+    #loading-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .spinner { width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<div id="loading-page"><div class="spinner"></div></div>
+
+<!-- Password gate -->
+<div id="gate-page" style="display:none">
+  <div class="gate-card">
+    <div class="gate-label">私人执业咨询师成长研究</div>
+    <h2 class="gate-title">执业困境共享</h2>
+    <p class="gate-desc">本页面收录了参与研究的咨询师自愿分享的执业困境描述（已匿名处理）。请输入访问密码继续。</p>
+    <input id="pw-input" type="password" class="gate-input" placeholder="请输入访问密码" />
+    <button id="pw-btn" class="gate-btn" onclick="verifyPassword()">进入</button>
+    <p id="pw-error" class="gate-error">密码错误，请重试。</p>
+  </div>
+</div>
+
+<!-- Forum content -->
+<div id="forum-page">
+  <div class="container">
+    <div class="label">私人执业咊询师成长研究</div>
+    <h1>执业困境共享</h1>
+    <p class="subtitle">以下内容由参与研究的咊询师自愿分享，经匿名处理后展示。这些真实的执业困境描述，或许能让您感受到：您并不孤单。<br>您也可以在每条分享下方留言，分享您的共鸣或感受（留言将在审核后显示）。</p>
+    <div id="post-count" class="post-count"></div>
+
+    <!-- Section 1: Step 1 answers -->
+    <div class="section-header">
+      <div class="section-label">① 执业困境是怎么样的？</div>
+      <p class="section-desc">参与者对自己所经历的执业困境的具体描述</p>
+    </div>
+    <div id="posts-step1"></div>
+
+    <!-- Section 2: Step 2 answers -->
+    <div class="section-header" style="margin-top:2.5rem;">
+      <div class="section-label">② 那段经历有没有改变你对某件事的理解？</div>
+      <p class="section-desc">参与者对那段困境经历的反思与认知转变的描述</p>
+    </div>
+    <div id="posts-step2"></div>
+
+    <p class="footer-note">所有内容均已匿名处理 · 分享者已知情同意 · 留言将在审核后显示 · 仅供已注册咊询师查阅</p>
+  </div>
+</div>
+
+<script>
+var API_BASE = 'https://therapisttool-anfd8v4p.manus.space/api/trpc';
+var SESSION_KEY = 'forum_auth';
+var isAdmin = false; // set to true after password verified
+
+async function trpcMutate(procedure, input) {
+  var res = await fetch(API_BASE + '/' + procedure, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'omit',
+    body: JSON.stringify({ json: input }),
+  });
+  var json = await res.json();
+  if (json.error) throw new Error(json.error.message || 'Request failed');
+  return json.result && json.result.data && json.result.data.json !== undefined
+    ? json.result.data.json : (json.result && json.result.data);
+}
+
+async function trpcQuery(procedure, input) {
+  var encoded = encodeURIComponent(JSON.stringify({ json: input || {} }));
+  var res = await fetch(API_BASE + '/' + procedure + '?input=' + encoded, {
+    credentials: 'omit',
+  });
+  var json = await res.json();
+  if (json.error) throw new Error(json.error.message || 'Request failed');
+  return json.result && json.result.data && json.result.data.json !== undefined
+    ? json.result.data.json : (json.result && json.result.data);
+}
+
+function formatDate(dateStr) {
+  var d = new Date(dateStr);
+  return d.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderComments(postId, comments) {
+  var container = document.getElementById('comments-' + postId);
+  if (!container) return;
+  if (!comments || comments.length === 0) {
+    container.innerHTML = '<div class="no-comments">暂无留言，成为第一个留言的人。</div>';
+    return;
+  }
+  container.innerHTML = comments.map(function(c) {
+    return '<div class="comment-item">' +
+      '<div class="comment-date">' + formatDate(c.createdAt) + '</div>' +
+      '<p class="comment-text">' + escapeHtml(c.content) + '</p>' +
+    '</div>';
+  }).join('');
+}
+
+async function loadComments(postId) {
+  try {
+    var comments = await trpcQuery('forum.getComments', { responseId: postId });
+    renderComments(postId, comments);
+  } catch(e) {
+    var container = document.getElementById('comments-' + postId);
+    if (container) container.innerHTML = '<div class="no-comments">留言加载失败。</div>';
+  }
+}
+
+async function submitComment(postId) {
+  var textarea = document.getElementById('comment-input-' + postId);
+  var content = textarea.value.trim();
+  if (!content || content.length < 5) { alert('留言内容至少需要5个字。'); return; }
+  if (content.length > 500) { alert('留言内容不超过500字。'); return; }
+  var btn = document.getElementById('comment-btn-' + postId);
+  btn.disabled = true;
+  btn.textContent = '提交中……';
+  try {
+    await trpcMutate('forum.addComment', { responseId: postId, content: content });
+    textarea.value = '';
+    btn.textContent = '留言';
+    btn.disabled = false;
+    var successEl = document.getElementById('comment-success-' + postId);
+    if (successEl) { successEl.style.display = 'block'; setTimeout(function() { successEl.style.display = 'none'; }, 4000); }
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '留言';
+    alert('提交失败，请重试。');
+  }
+}
+
+function splitAnswer(answer) {
+  var marker1 = '\u3010\u7b2c\u4e00\u9898\u56de\u7b54\u3011';
+  var marker2 = '\u3010\u7b2c\u4e8c\u9898\u56de\u7b54\u3011';
+  var idx1 = answer.indexOf(marker1);
+  var idx2 = answer.indexOf(marker2);
+  if (idx1 >= 0 && idx2 > idx1) {
+    var step1 = answer.substring(idx1 + marker1.length, idx2).trim();
+    var step2 = answer.substring(idx2 + marker2.length).trim();
+    return { step1: step1, step2: step2 };
+  }
+  return { step1: answer, step2: null };
+}
+
+function buildPostHtml(post, index, step) {
+  // step: 1 = show only step1, 2 = show only step2, undefined = show both
+  var pid = post.id;
+  var parts = splitAnswer(post.answer);
+  var bodyHtml;
+  if (step === 1) {
+    bodyHtml = '<div class="post-body">' + escapeHtml(parts.step1) + '</div>';
+  } else if (step === 2) {
+    var content = parts.step2 || parts.step1;
+    bodyHtml = '<div class="post-body">' + escapeHtml(content) + '</div>';
+  } else if (parts.step2) {
+    bodyHtml =
+      '<div class="post-step">' +
+        '<div class="post-step-label">\u2460 \u4f60\u7ecf\u5386\u7684\u6267\u4e1a\u56f0\u5883\u662f\u600e\u4e48\u6837\u7684\uff1f</div>' +
+        '<div class="post-body">' + escapeHtml(parts.step1) + '</div>' +
+      '</div>' +
+      '<div class="post-step" style="border-top:1px solid #e8e4dc;">' +
+        '<div class="post-step-label">\u2461 \u90a3\u6bb5\u7ecf\u5386\u6709\u6ca1\u6709\u6539\u53d8\u4f60\u5bf9\u67d0\u4ef6\u4e8b\u7684\u7406\u89e3\uff1f</div>' +
+        '<div class="post-body">' + escapeHtml(parts.step2) + '</div>' +
+      '</div>';
+  } else {
+    bodyHtml = '<div class="post-body">' + escapeHtml(parts.step1) + '</div>';
+  }
+  var deleteBtn = isAdmin
+    ? '<button onclick="deletePost(' + pid + ')" style="margin-left:auto;padding:0.2rem 0.6rem;background:transparent;border:1px solid #c84040;border-radius:2px;color:#c84040;font-family:var(--font-mono);font-size:0.6rem;cursor:pointer;letter-spacing:0.04em;" title="\u4ece\u8bba\u575b\u79fb\u9664">\u79fb\u9664</button>'
+    : '';
+  return '<div class="post-card" id="post-' + pid + '">' +
+    '<div class="post-header">' +
+      '<span class="post-num">#' + String(index + 1).padStart(2, '0') + '</span>' +
+      '<span class="post-date">' + formatDate(post.submittedAt) + '</span>' +
+      '<span class="post-words">' + post.wordCount + ' \u5b57</span>' +
+      deleteBtn +
+    '</div>' +
+    bodyHtml +
+    '<div class="comments-section">' +
+      '<div class="comments-header">共鸣留言</div>' +
+      '<div id="comments-' + pid + '"><div class="no-comments">加载中……</div></div>' +
+      '<div class="comment-form">' +
+        '<label class="comment-form-label">留下您的共鸣或感受</label>' +
+        '<textarea id="comment-input-' + pid + '" class="comment-textarea" rows="3" placeholder="您也有类似的经历吗？或者这段描述让您想到了什么……（5—500字）"></textarea>' +
+        '<div class="comment-form-footer">' +
+          '<span class="comment-hint">留言匿名 · 审核后显示</span>' +
+          '<button id="comment-btn-' + pid + '" class="comment-submit" onclick="submitComment(' + pid + ')">留言</button>' +
+        '</div>' +
+        '<div id="comment-success-' + pid + '" class="comment-success">已提交，审核通过后将显示。感谢您的分享。</div>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+async function loadPosts() {
+  var step1Container = document.getElementById('posts-step1');
+  var step2Container = document.getElementById('posts-step2');
+  var countEl = document.getElementById('post-count');
+  try {
+    var posts = await trpcQuery('forum.getPosts', {});
+    if (!posts || posts.length === 0) {
+      step1Container.innerHTML = '<div class="empty-state">暂无分享内容，敬请期待。</div>';
+      step2Container.innerHTML = '';
+      countEl.textContent = '共 0 篇分享';
+      return;
+    }
+    countEl.textContent = '共 ' + posts.length + ' 篇分享（均来自阶段01：执业困境描述）';
+    // Render step1 answers
+    step1Container.innerHTML = posts.map(function(p, i) { return buildPostHtml(p, i, 1); }).join('');
+    // Render step2 answers (only posts that have a step2)
+    var postsWithStep2 = posts.filter(function(p) { return splitAnswer(p.answer).step2; });
+    if (postsWithStep2.length > 0) {
+      step2Container.innerHTML = postsWithStep2.map(function(p, i) { return buildPostHtml(p, i, 2); }).join('');
+    } else {
+      step2Container.innerHTML = '<div class="empty-state">暂无第二步回答分享。</div>';
+    }
+    // Load comments for each post (only once per post id)
+    posts.forEach(function(p) { loadComments(p.id); });
+  } catch(e) {
+    step1Container.innerHTML = '<div class="empty-state">加载失败，请刷新重试。</div>';
+  }
+}
+
+async function verifyPassword() {
+  var pw = document.getElementById('pw-input').value.trim();
+  if (!pw) return;
+  var btn = document.getElementById('pw-btn');
+  btn.disabled = true;
+  btn.textContent = '验证中……';
+  document.getElementById('pw-error').style.display = 'none';
+  try {
+    var result = await trpcMutate('forum.verifyPassword', { password: pw });
+    if (result && result.valid) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      showForum();
+    } else {
+      document.getElementById('pw-error').style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '进入';
+    }
+  } catch(e) {
+    document.getElementById('pw-error').textContent = '验证失败，请重试。';
+    document.getElementById('pw-error').style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '进入';
+  }
+}
+
+function showForum() {
+  isAdmin = true;
+  document.getElementById('gate-page').style.display = 'none';
+  document.getElementById('forum-page').style.display = 'block';
+  loadPosts();
+}
+
+async function deletePost(pid) {
+  if (!confirm('确定要从论坛移除这条分享吗？（仅取消分享，不删除原始回答）')) return;
+  try {
+    await trpcMutate('forum.toggleShare', { responseId: pid, shared: 'no' });
+    var el = document.getElementById('post-' + pid);
+    if (el) {
+      el.style.transition = 'opacity 0.3s';
+      el.style.opacity = '0';
+      setTimeout(function() { el.remove(); }, 300);
+    }
+    // Update count
+    var countEl = document.getElementById('post-count');
+    if (countEl) {
+      var m = countEl.textContent.match(/(\d+)/);
+      if (m) countEl.textContent = countEl.textContent.replace(m[0], String(parseInt(m[0]) - 1));
+    }
+  } catch(e) {
+    alert('移除失败，请重试。');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var input = document.getElementById('pw-input');
+  if (input) input.addEventListener('keydown', function(e) { if (e.key === 'Enter') verifyPassword(); });
+});
+
+document.getElementById('loading-page').style.display = 'none';
+if (sessionStorage.getItem(SESSION_KEY)) {
+  showForum();
+} else {
+  document.getElementById('gate-page').style.display = 'flex';
+}
+</script>
+</body>
+</html>
