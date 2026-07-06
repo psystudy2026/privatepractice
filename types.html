@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>执业状态类型系统 · 私人执业咨询师成长研究</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", Georgia, serif;
+      background: #f5f3ee;
+      color: #1a1a14;
+      line-height: 1.7;
+      padding: 0 0 60px;
+    }
+    .header {
+      background: #2d5a2d;
+      color: #fff;
+      padding: 40px 24px 32px;
+    }
+    .header-label {
+      font-family: "Courier New", monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: rgba(180,220,160,0.85);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+    .header p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.80);
+      max-width: 560px;
+    }
+    .container { max-width: 720px; margin: 0 auto; padding: 0 20px; }
+    .section { margin-top: 40px; }
+    .section-title {
+      font-family: "Courier New", monospace;
+      font-size: 11px;
+      letter-spacing: 0.10em;
+      color: #5a8a5a;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #d8d4c8;
+    }
+    .intro-card {
+      background: #fff;
+      border: 1px solid #d8d4c8;
+      border-left: 4px solid #2d5a2d;
+      border-radius: 4px;
+      padding: 20px 22px;
+      margin-bottom: 16px;
+    }
+    .intro-card p { font-size: 15px; color: #2a2a1e; margin-bottom: 10px; }
+    .intro-card p:last-child { margin-bottom: 0; }
+    .axes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    @media (max-width: 480px) { .axes-grid { grid-template-columns: 1fr; } }
+    .axis-card {
+      background: #fff;
+      border: 1px solid #d8d4c8;
+      border-radius: 4px;
+      padding: 16px 18px;
+    }
+    .axis-code {
+      font-family: "Courier New", monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: #2d5a2d;
+      margin-bottom: 6px;
+    }
+    .axis-name { font-size: 14px; font-weight: 600; color: #1a1a14; margin-bottom: 8px; }
+    .axis-options { display: flex; gap: 8px; flex-wrap: wrap; }
+    .axis-opt {
+      background: #eef5ee;
+      border: 1px solid #b8d4b8;
+      border-radius: 3px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: #2d5a2d;
+      font-family: "Courier New", monospace;
+    }
+    .axis-desc { font-size: 13px; color: #5a5a4a; margin-top: 8px; }
+    .example-box {
+      background: #f0f8f0;
+      border: 1px solid #b8d4b8;
+      border-radius: 4px;
+      padding: 16px 18px;
+      margin-top: 4px;
+    }
+    .example-box .code {
+      font-family: "Courier New", monospace;
+      font-size: 22px;
+      font-weight: 700;
+      color: #2d5a2d;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .example-box .breakdown {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .breakdown-item {
+      background: #fff;
+      border: 1px solid #c8dcc8;
+      border-radius: 3px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-family: "Courier New", monospace;
+      color: #2d5a2d;
+    }
+    .example-box p { font-size: 14px; color: #3a4a3a; }
+    .types-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    @media (max-width: 480px) { .types-grid { grid-template-columns: 1fr; } }
+    .type-card {
+      background: #fff;
+      border: 1px solid #d8d4c8;
+      border-radius: 4px;
+      padding: 14px 16px;
+      transition: border-color 0.15s;
+    }
+    .type-card:hover { border-color: #8aaa6a; }
+    .type-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+    .type-code {
+      font-family: "Courier New", monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: #2d5a2d;
+      min-width: 44px;
+    }
+    .type-name { font-size: 15px; font-weight: 600; color: #1a1a14; }
+    .type-desc { font-size: 13px; color: #5a5a4a; line-height: 1.5; }
+    .disclaimer {
+      background: #fff;
+      border: 1px solid #d8d4c8;
+      border-radius: 4px;
+      padding: 16px 18px;
+      margin-top: 4px;
+    }
+    .disclaimer p { font-size: 13px; color: #7a7a6a; line-height: 1.6; }
+    .back-link {
+      display: inline-block;
+      margin: 28px 0 0;
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      color: #5a8a5a;
+      text-decoration: none;
+      letter-spacing: 0.06em;
+    }
+    .back-link:hover { color: #2d5a2d; text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <div style="background:#eef5ee;padding:12px 24px;text-align:center;font-size:13px;color:#2d5a2d;border-bottom:1px solid #b8d4b8;">
+    如果对这个研究感兴趣或者有疑问，欢迎发邮件至 <a href="mailto:psystudy2026@163.com" style="color:#2d5a2d;font-weight:600;text-decoration:underline;">psystudy2026@163.com</a>
+  </div>
+  <div class="header">
+    <div class="header-label">私人执业咊询师成长研究 · 类型系统说明</div>
+    <h1>执业状态类型系统<br>如何从四个维度产生16种类型</h1>
+    <p>这份说明解释了 AI 画像中“执业状态类型”的分类逻辑，帮助你理解自己的类型代码是如何得出的。</p>
+  </div>
+
+  <div class="container">
+
+    <!-- Section 1: 基本逻辑 -->
+    <div class="section">
+      <div class="section-title">01 · 基本逻辑</div>
+      <div class="intro-card">
+        <p>这个类型系统的设计灵感来自 MBTI，但聚焦于一个更具体的问题：<strong>一个私人执业咨询师，在面对执业困境时，呈现出怎样的状态模式？</strong></p>
+        <p>我们从四个维度来观察这个问题，每个维度有两个方向，四个维度的两两组合，产生了 <strong>2×2×2×2 = 16</strong> 种可能的类型。</p>
+        <p>这16种类型不是评判，也不是诊断。它们只是对"你目前的执业状态"的一种描述性命名，帮助你感到"原来我是这样的"——被看见，而不是被分类。</p>
+      </div>
+    </div>
+
+    <!-- Section 2: 四个维度 -->
+    <div class="section">
+      <div class="section-title">02 · 四个维度</div>
+      <div class="axes-grid">
+        <div class="axis-card">
+          <div class="axis-code">I / E</div>
+          <div class="axis-name">困境来源</div>
+          <div class="axis-options">
+            <span class="axis-opt">I = 内省型</span>
+            <span class="axis-opt">E = 处境型</span>
+          </div>
+          <div class="axis-desc">你描述的困境，主要指向内在的质疑（"我是谁、我为什么做这件事"），还是外部的处境（个案来源、收入、孤独）？</div>
+        </div>
+        <div class="axis-card">
+          <div class="axis-code">S / A</div>
+          <div class="axis-name">应对方式</div>
+          <div class="axis-options">
+            <span class="axis-opt">S = 停留型</span>
+            <span class="axis-opt">A = 行动型</span>
+          </div>
+          <div class="axis-desc">面对困境时，你倾向于在里面停留、思考、感受，还是倾向于通过行动、改变、解决来应对？</div>
+        </div>
+        <div class="axis-card">
+          <div class="axis-code">T / C</div>
+          <div class="axis-name">理解变化</div>
+          <div class="axis-options">
+            <span class="axis-opt">T = 转变型</span>
+            <span class="axis-opt">C = 持守型</span>
+          </div>
+          <div class="axis-desc">这段困境有没有带来对某件事理解的转变？还是困境没有改变你的核心理解，你仍在原有框架内？</div>
+        </div>
+        <div class="axis-card">
+          <div class="axis-code">D / P</div>
+          <div class="axis-name">整合程度</div>
+          <div class="axis-options">
+            <span class="axis-opt">D = 消化型</span>
+            <span class="axis-opt">P = 悬置型</span>
+          </div>
+          <div class="axis-desc">这段困境目前是否已有某种程度的整合或和解？还是它仍悬而未决，还在进行中？</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: 如何读类型代码 -->
+    <div class="section">
+      <div class="section-title">03 · 如何读类型代码</div>
+      <div class="example-box">
+        <div class="code">ISCD</div>
+        <div class="breakdown">
+          <span class="breakdown-item">I = 内省型</span>
+          <span class="breakdown-item">S = 停留型</span>
+          <span class="breakdown-item">C = 持守型</span>
+          <span class="breakdown-item">D = 消化型</span>
+        </div>
+        <p>四个字母依次对应四个维度（困境来源 → 应对方式 → 理解变化 → 整合程度）。<strong>ISCD 守望者</strong>：在内在质疑中停留，没有改变核心理解，但与那种不确定性达成了某种和解。</p>
+      </div>
+    </div>
+
+    <!-- Section 4: 全部16种类型 -->
+    <div class="section">
+      <div class="section-title">04 · 全部16种类型</div>
+      <div class="types-grid">
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">ISTD</span><span class="type-name">沉淀者</span></div>
+          <div class="type-desc">在内在质疑中停留，经历了理解的颠覆，并逐渐找到了新的立足点。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">ISTP</span><span class="type-name">转折中的人</span></div>
+          <div class="type-desc">经历了某个改变理解的时刻，但那个转折还没有完全落地，仍在途中。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">ISCD</span><span class="type-name">守望者</span></div>
+          <div class="type-desc">在内在质疑中停留，没有改变核心理解，但与那种不确定性达成了某种和解。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">ISCP</span><span class="type-name">悬而未决者</span></div>
+          <div class="type-desc">在内在质疑中停留，困境还在，理解未变，与它同行但尚未和解。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">IATD</span><span class="type-name">整合者</span></div>
+          <div class="type-desc">通过行动应对内在质疑，经历了理解的转变，并将它整合进了工作方式。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">IATP</span><span class="type-name">探索者</span></div>
+          <div class="type-desc">用行动回应内在的不确定，理解在变，但还没有找到新的落脚点。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">IACD</span><span class="type-name">实践者</span></div>
+          <div class="type-desc">用行动应对内在质疑，核心理解未变，但已找到与困境共处的方式。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">IACP</span><span class="type-name">奔跑者</span></div>
+          <div class="type-desc">用行动应对内在质疑，困境还在，理解未变，在不停地做但不确定去向哪里。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">ESTD</span><span class="type-name">见证者</span></div>
+          <div class="type-desc">在外部处境的困难中停留，经历了对这份工作的重新理解，并找到了新的方向。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">ESTP</span><span class="type-name">过渡者</span></div>
+          <div class="type-desc">在外部处境的困难中停留，理解在改变，但还在这个过渡的中间地带。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">ESCD</span><span class="type-name">稳定者</span></div>
+          <div class="type-desc">在外部处境的困难中停留，核心理解未变，已与这种处境达成了某种和解。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">ESCP</span><span class="type-name">独行者</span></div>
+          <div class="type-desc">在外部处境的困难中停留，困境还在，理解未变，一个人扛着这一切继续走。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">EATD</span><span class="type-name">开拓者</span></div>
+          <div class="type-desc">用行动应对外部处境，经历了理解的转变，并将新的理解转化成了新的做法。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">EATP</span><span class="type-name">寻路者</span></div>
+          <div class="type-desc">用行动应对外部处境，理解在变，但还没有找到清晰的方向。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">EACD</span><span class="type-name">建设者</span></div>
+          <div class="type-desc">用行动应对外部处境，核心理解未变，已在现有框架内建立了自己的方式。</div>
+        </div>
+        <div class="type-card">
+          <div class="type-header"><span class="type-code">EACP</span><span class="type-name">前行者</span></div>
+          <div class="type-desc">用行动应对外部处境，困境还在，理解未变，在不确定中继续向前。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5: 说明 -->
+    <div class="section">
+      <div class="section-title">05 · 关于这个系统的说明</div>
+      <div class="disclaimer">
+        <p>这16种类型是基于你填写的问卷内容，由 AI 根据你的回答描述推断得出的。它不是一项经过效度检验的心理测量工具，也不构成任何临床诊断依据。</p>
+        <p style="margin-top:10px;">类型描述的目的是提供一面镜子——让你感到"原来我是这样的"，而不是给你贴一个标签。没有"好"的类型，也没有"坏"的类型，每种类型都是真实的执业状态，都有其内在的合理性。</p>
+        <p style="margin-top:10px;">如果你对自己的类型有疑问，或者感觉描述不太准确，这是正常的——AI 的推断基于有限的文字，无法完整捕捉一个人的全部状态。</p>
+      </div>
+    </div>
+
+    <a class="back-link" href="javascript:history.back()">← 返回</a>
+
+  </div>
+</body>
+</html>
