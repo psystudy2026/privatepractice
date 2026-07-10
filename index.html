@@ -75,9 +75,65 @@
     .spinner { width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
     #error-page { display: none; text-align: center; padding: 4rem 1.25rem; }
+
+    /* 微信内置浏览器提示遮罩 */
+    #wechat-mask {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.82);
+      z-index: 9999;
+      padding: 1.5rem;
+    }
+    #wechat-mask .arrow-area {
+      position: absolute;
+      top: 0.75rem;
+      right: 1rem;
+      text-align: right;
+    }
+    #wechat-mask .arrow-img {
+      width: 80px;
+      opacity: 0.95;
+    }
+    #wechat-mask .tip-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 8px;
+      padding: 2rem 1.5rem;
+      max-width: 300px;
+      width: 88%;
+      text-align: center;
+    }
+    #wechat-mask .tip-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    #wechat-mask .tip-title { font-size: 1rem; font-weight: 600; color: #1a1a14; margin-bottom: 0.5rem; font-family: Georgia, serif; }
+    #wechat-mask .tip-desc { font-size: 0.82rem; color: #5a5a4a; line-height: 1.7; font-family: Georgia, serif; }
+    #wechat-mask .tip-step { margin-top: 1rem; padding: 0.75rem; background: #f5f3ee; border-radius: 4px; font-size: 0.78rem; color: #2d5a2d; font-family: 'Courier New', monospace; line-height: 1.6; }
   </style>
 </head>
 <body>
+
+<!-- 微信内置浏览器提示遮罩 -->
+<div id="wechat-mask">
+  <div class="arrow-area">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M40 70 C40 70 70 50 70 20" stroke="white" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M60 15 L70 20 L65 30" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+    <div style="color:white;font-size:0.75rem;font-family:'Courier New',monospace;margin-top:0.25rem;">点击右上角</div>
+  </div>
+  <div class="tip-box">
+    <div class="tip-icon">🌐</div>
+    <div class="tip-title">请在浏览器中打开</div>
+    <div class="tip-desc">该问卷需要在系统浏览器中填写，微信内置浏览器无法正常显示。</div>
+    <div class="tip-step">
+      点击右上角 「…」 按钮<br>
+      选择「在浏览器中打开」
+    </div>
+  </div>
+</div>
 
 <div id="loading-page"><div class="spinner"></div></div>
 
@@ -514,6 +570,18 @@
 
 <script>
 // ── CONFIG: 主站 API 地址（部署后填入实际地址）──────────────────────────────
+// ── 微信内置浏览器检测：显示引导遮罩 ────────────────────────────────────────────
+(function() {
+  var ua = navigator.userAgent.toLowerCase();
+  var isWechat = ua.indexOf('micromessenger') !== -1;
+  if (isWechat) {
+    var mask = document.getElementById('wechat-mask');
+    var loading = document.getElementById('loading-page');
+    if (mask) mask.style.display = 'block';
+    if (loading) loading.style.display = 'none';
+  }
+})();
+
 var API_BASE = 'https://therapisttool-anfd8v4p.manus.space/api/trpc';
 // Survey host (this page's own domain)
 var SURVEY_HOST = 'https://psystudy2026.github.io/privatepractice';
