@@ -808,8 +808,7 @@ var SURVEY_HOST = 'https://psystudy2026.github.io/privatepractice';
       if (submittedResult && submittedResult.responseId) {
         await trpcMutate('recruit.expressInterest', {
           responseId: submittedResult.responseId,
-          email: email || '',
-          stageNumber: '01',
+          contactEmail: email || '',
         });
       }
       document.getElementById('recruit-teaser-form').style.display = 'none';
