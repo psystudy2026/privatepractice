@@ -439,10 +439,10 @@
           <p style="font-size:0.82rem;color:#3a3a2a;margin-bottom:0.5rem;">如果您觉得这份问卷有意思，欢迎分享给认识的同行：</p>
           <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
             <select id="poster-style-select" onchange="updatePosterPreview()" style="padding:0.45rem 0.6rem;border:1px solid #d8d4c8;border-radius:2px;font-size:0.75rem;font-family:'Courier New',monospace;color:#3a3a2a;background:white;cursor:pointer;">
-              <option value="1">风格1：孤独感切入</option>
-              <option value="4">风格4：共鸣式</option>
-              <option value="5">风格5：悬念式</option>
-              <option value="6">风格6：专业感</option>
+              <option value="1">海报 1</option>
+              <option value="4">海报 2</option>
+              <option value="5">海报 3</option>
+              <option value="6">海报 4</option>
             </select>
           </div>
           <!-- Poster preview -->
@@ -951,7 +951,7 @@ var SURVEY_HOST = 'https://psystudy2026.github.io/privatepractice';
       ctx.font = '11px "Courier New", monospace';
       ctx.fillText(new Date().toLocaleDateString('zh-CN'), 40, 1000);
       // Download
-      var styleNames = {'1':'孤独感','4':'共鸣式','5':'悬念式','6':'专业感'};
+      var styleNames = {'1':'1','4':'2','5':'3','6':'4'};
       var link = document.createElement('a');
       link.download = '执业困境调研_' + (styleNames[styleKey]||'') + '_' + new Date().toISOString().slice(0,10) + '.png';
       link.href = canvas.toDataURL('image/png');
