@@ -91,7 +91,7 @@
   <div class="container">
     <div class="label">私人执业咨询师成长研究</div>
     <h1 id="survey-title">执业体验调研</h1>
-    <p class="subtitle">本调研包含基本信息收集和三步开放写作，全程分五个部分，匿名进行。全部完成后，可选择收到一份基于您回答的个人执业画像。</p>
+    <p class="subtitle">这份问卷想了解你在私人执业中真实的经历和感受。可以作为入组参考，也可以帮助你了解自己目前的执业处境。填写完成后，你将收到一份 AI 个人执业画像，包含基于你的回答生成的执业状态类型分析。</p>
     <div style="margin-bottom:1.5rem;padding:0.75rem 1rem;background:#f5f3ee;border:1px solid #d8d4c8;border-left:3px solid #c8a840;border-radius:2px;font-size:0.78rem;line-height:1.6;color:#5a5a4a;font-family:'Courier New',monospace;">
       <strong style="color:#8a7020;">知情同意说明</strong><br>
       您的回答将用于私人执业咨询师成长研究目的。提交后，系统将使用 AI 生成个人回馈，该过程为一次性调用，<strong>您的回答不会被用于 AI 模型训练</strong>，也不会被研究者以外的任何人访问。参与完全自愿，提交即视为同意上述条款。
@@ -277,6 +277,10 @@
         <span class="field-label">您的回答</span>
         <span class="word-count" id="word-count-display-1" style="color:#c8a840">0 字 / 建议 50—300 字</span>
       </div>
+      <div style="margin-bottom:0.4rem;padding:0.4rem 0.75rem;background:#f5f3ee;border-radius:2px;font-family:'Courier New',monospace;font-size:0.62rem;color:#8a8a7a;display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+        <span>ℹ 内容自动保存在本地，刷新页面不会丢失</span>
+        <button onclick="saveDraft(1)" style="padding:0.2rem 0.6rem;background:white;border:1px solid #d8d4c8;border-radius:2px;font-family:'Courier New',monospace;font-size:0.6rem;cursor:pointer;color:#4a7a4a;">手动保存</button>
+      </div>
       <textarea id="answer-input-1" rows="10" placeholder="请尽量具体地描述你的内在体验……请注意：无需描述来访者的具体情况或任何保密内容。"></textarea>
       <div class="progress-bar"><div class="progress-fill" id="progress-fill-1" style="width:0%;background:#c8a840"></div></div>
       <p class="hint">请直接描述您的真实体验，无需修饰或解释。建议 50—300 字。</p>
@@ -301,6 +305,10 @@
       <div class="field-header">
         <span class="field-label">您的回答</span>
         <span class="word-count" id="word-count-display-2" style="color:#c8a840">0 字 / 建议 50—300 字</span>
+      </div>
+      <div style="margin-bottom:0.4rem;padding:0.4rem 0.75rem;background:#f5f3ee;border-radius:2px;font-family:'Courier New',monospace;font-size:0.62rem;color:#8a8a7a;display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+        <span>ℹ 内容自动保存在本地，刷新页面不会丢失</span>
+        <button onclick="saveDraft(2)" style="padding:0.2rem 0.6rem;background:white;border:1px solid #d8d4c8;border-radius:2px;font-family:'Courier New',monospace;font-size:0.6rem;cursor:pointer;color:#4a7a4a;">手动保存</button>
       </div>
       <textarea id="answer-input-2" rows="10" placeholder="请在此输入您的回答……"></textarea>
       <div class="progress-bar"><div class="progress-fill" id="progress-fill-2" style="width:0%;background:#c8a840"></div></div>
@@ -335,13 +343,17 @@
             <strong style="font-size:0.82rem;color:#2d5a2d;">问题一：</strong><span style="font-size:0.85rem;color:#3a5a3a;"> 如果您在前两步描述的职业困境中，提到了个案来源的问题，或者您认为个案来源就是您目前的主要困境——请回应上方的行业数据：看到这些数字，你的第一反应是什么？你如何理解这个现象与你自己的执业处境之间的关系？<strong>您现在的感受和想法是什么？</strong></span>
           </div>
           <div style="padding:0.65rem 0.85rem;background:#f0f8f0;border-radius:2px;border-left:2px solid #6a9a6a;">
-            <strong style="font-size:0.82rem;color:#2d5a2d;">问题二：</strong><span style="font-size:0.85rem;color:#3a5a3a;"> 如果您的职业困境与个案来源无关——请想一想：您描述的那个困境，有没有什么与它相违背的事实或基础？（比如，某些迹象表明情况并不像您描述的那样，或者有什么你知道但没有纳入考虑的信息。）如果有，请写下那个事实或基础是什么，以及您对它的感受和想法。<br><br><em style="font-size:0.82rem;color:#4a6a4a;">如果暂时想不到相反的证据，也可以写：当你被问到"有没有相反的证据"时，你的第一反应是什么？那个反应本身也是有意义的。</em></span>
+            <strong style="font-size:0.82rem;color:#2d5a2d;">问题二：</strong><span style="font-size:0.85rem;color:#3a5a3a;"> 如果您的职业困境与个案来源无关——请想一想：您描述的那个困境，有没有什么与它相违背的事实或基础？（比如，某些迹象表明情况并不像您描述的那样，或者有什么你知道但没有纳入考虑的信息。）如果有，请写下那个事实或基础是什么，以及您对它的感受和想法。<em style="font-size:0.82rem;color:#4a6a4a;">如果想不到与您描述的困境相违背的事实，可以考虑一下可能的原因。或者，这个问题本身让你有什么感受和想法？</em>。</em></span>
           </div>
         </div>
       </div>
       <div class="field-header">
         <span class="field-label">您的回答</span>
         <span class="word-count" id="word-count-display-3" style="color:#c8a840">0 字 / 建议 30—500 字</span>
+      </div>
+      <div style="margin-bottom:0.4rem;padding:0.4rem 0.75rem;background:#f5f3ee;border-radius:2px;font-family:'Courier New',monospace;font-size:0.62rem;color:#8a8a7a;display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+        <span>ℹ 内容自动保存在本地，刷新页面不会丢失</span>
+        <button onclick="saveDraft(3)" style="padding:0.2rem 0.6rem;background:white;border:1px solid #d8d4c8;border-radius:2px;font-family:'Courier New',monospace;font-size:0.6rem;cursor:pointer;color:#4a7a4a;">手动保存</button>
       </div>
       <textarea id="answer-input-3" rows="8" placeholder="请直接写下你的真实想法和感受……"></textarea>
       <div class="progress-bar"><div class="progress-fill" id="progress-fill-3" style="width:0%;background:#c8a840"></div></div>
@@ -358,7 +370,7 @@
       <div class="prompt-card">
         <div class="prompt-label">可选填写</div>
         <p class="prompt-text">还有什么是您想说但在前面问题中没有说到的？</p>
-        <p style="font-size:0.82rem;color:#6a6a5a;margin-top:0.5rem;">此题完全自愿，无字数要求。不填写可直接点击下方按鈕完成调研。</p>
+        <p style="font-size:0.82rem;color:#6a6a5a;margin-top:0.5rem;">此题完全自愿，无字数要求。不填写可直接点击下方按钮完成调研。</p>
       </div>
       <textarea id="open-input" rows="6" placeholder="可以是任何内容——对这项调研的感受，对私人执业的其他想法，或者任何你想说的。" style="width:100%;padding:0.75rem;border:1px solid #d8d4c8;border-radius:2px;font-family:Georgia,serif;font-size:0.875rem;line-height:1.6;resize:none;outline:none;background:white;"></textarea>
       <div class="error-box" id="open-error"></div>
@@ -417,18 +429,26 @@
         <span class="feedback-header-sub">请查收您的邮箱</span>
       </div>
       <div style="padding:1rem;background:white;font-size:0.875rem;line-height:1.6;color:#3a3a2a;">
-        您的个人执业画像已发送到您的邮箱，请查收收件箱（包括垃圾邮件文件夹）。
+        您的个人执业画像已发送到您的邮箱，请查收。
+        <div style="margin-top:0.75rem;padding:0.6rem 0.875rem;background:#fff8e8;border:1px solid #e8c870;border-left:3px solid #c8a840;border-radius:2px;font-size:0.78rem;color:#5a4a10;font-family:'Courier New',monospace;line-height:1.6;">
+          <strong>⚠ 如果收件箱中没有看到邮件，请检查「垃圾邮件」或「促销」文件夹。</strong><br>
+          发件人地址为 <strong>psystudy1000@outlook.com</strong>，邮件主题含「个人执业画像」字样。
+        </div>
         <p style="margin-top:0.75rem;font-size:0.72rem;color:#8a8a7a;font-family:'Courier New',monospace;">本回馈由 AI 生成，仅供参考，不构成临床诊断。</p>
         <div style="margin-top:1rem;padding-top:0.75rem;border-top:1px solid #e8e4dc;">
           <p style="font-size:0.82rem;color:#3a3a2a;margin-bottom:0.5rem;">如果您觉得这份问卷有意思，欢迎分享给认识的同行：</p>
           <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
-            <select id="poster-style-select" style="padding:0.45rem 0.6rem;border:1px solid #d8d4c8;border-radius:2px;font-size:0.75rem;font-family:'Courier New',monospace;color:#3a3a2a;background:white;cursor:pointer;">
+            <select id="poster-style-select" onchange="updatePosterPreview()" style="padding:0.45rem 0.6rem;border:1px solid #d8d4c8;border-radius:2px;font-size:0.75rem;font-family:'Courier New',monospace;color:#3a3a2a;background:white;cursor:pointer;">
               <option value="1">风格1：孤独感切入</option>
               <option value="4">风格4：共鸣式</option>
               <option value="5">风格5：悬念式</option>
               <option value="6">风格6：专业感</option>
             </select>
-            <button id="share-poster-btn" onclick="generateSharePoster()" style="padding:0.5rem 1rem;background:white;border:1px solid #8aaa6a;border-radius:2px;font-size:0.78rem;font-family:'Courier New',monospace;cursor:pointer;color:#2d5a2d;display:inline-flex;align-items:center;gap:0.4rem;">
+          </div>
+          <!-- Poster preview -->
+          <div style="margin-top:0.75rem;display:flex;align-items:flex-end;gap:0.75rem;flex-wrap:wrap;">
+            <img id="poster-preview-img" src="posters/poster-1-lonely.jpg" alt="海报预览" style="width:108px;height:192px;object-fit:cover;border-radius:2px;border:1px solid #d8d4c8;display:block;flex-shrink:0;" />
+            <button id="share-poster-btn" onclick="generateSharePoster()" style="padding:0.5rem 1rem;background:white;border:1px solid #8aaa6a;border-radius:2px;font-size:0.78rem;font-family:'Courier New',monospace;cursor:pointer;color:#2d5a2d;display:inline-flex;align-items:center;gap:0.4rem;align-self:flex-end;">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
               生成分享海报
             </button>
@@ -507,6 +527,22 @@ var SURVEY_HOST = 'https://psystudy2026.github.io/privatepractice';
     }
   }
 
+  // 海报预览图切换
+  var POSTER_PREVIEW_MAP = {
+    '1': 'posters/poster-1-lonely.jpg',
+    '4': 'posters/poster-4-resonance.jpg',
+    '5': 'posters/poster-5-mystery.jpg',
+    '6': 'posters/poster-6-professional.jpg',
+  };
+
+  window.updatePosterPreview = function() {
+    var sel = document.getElementById('poster-style-select');
+    var img = document.getElementById('poster-preview-img');
+    if (sel && img) {
+      img.src = POSTER_PREVIEW_MAP[sel.value] || POSTER_PREVIEW_MAP['1'];
+    }
+  };
+
   function countWords(text) {
     var chinese = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
     var english = (text.match(/\b[a-zA-Z]+\b/g) || []).length;
@@ -542,6 +578,50 @@ var SURVEY_HOST = 'https://psystudy2026.github.io/privatepractice';
   };
 
   var surveyData = null;
+
+  // ── 本地草稿保存/恢复 ────────────────────────────────────────────────────────
+  var DRAFT_KEY_PREFIX = 'survey_draft_';
+  var autoSaveTimers = {};
+
+  function saveDraft(step) {
+    var ta = document.getElementById('answer-input-' + step);
+    if (!ta) return;
+    try {
+      localStorage.setItem(DRAFT_KEY_PREFIX + step, ta.value);
+      var btn = ta.previousElementSibling && ta.previousElementSibling.querySelector('button');
+      if (btn) {
+        var orig = btn.textContent;
+        btn.textContent = '已保存 ✓';
+        btn.style.color = '#2d5a2d';
+        setTimeout(function() { btn.textContent = orig; btn.style.color = '#4a7a4a'; }, 1500);
+      }
+    } catch(e) {}
+  }
+
+  function loadDraft(step) {
+    try {
+      var val = localStorage.getItem(DRAFT_KEY_PREFIX + step);
+      if (val) {
+        var ta = document.getElementById('answer-input-' + step);
+        if (ta && !ta.value) ta.value = val;
+      }
+    } catch(e) {}
+  }
+
+  function clearDraft(step) {
+    try { localStorage.removeItem(DRAFT_KEY_PREFIX + step); } catch(e) {}
+  }
+
+  function setupAutoSave(step) {
+    var ta = document.getElementById('answer-input-' + step);
+    if (!ta) return;
+    loadDraft(step);
+    ta.addEventListener('input', function() {
+      clearTimeout(autoSaveTimers[step]);
+      autoSaveTimers[step] = setTimeout(function() { saveDraft(step); }, 2000);
+    });
+  }
+  // ─────────────────────────────────────────────────────────────────────────────
 
   var q1ResponseId = null;
   var collectedBasicInfo = null;
@@ -591,6 +671,7 @@ var SURVEY_HOST = 'https://psystudy2026.github.io/privatepractice';
     document.getElementById('bi-error').style.display = 'none';
     document.getElementById('basic-info-section').style.display = 'none';
     document.getElementById('q1-section').style.display = 'block';
+    setupAutoSave(1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -637,8 +718,10 @@ var SURVEY_HOST = 'https://psystudy2026.github.io/privatepractice';
     if (!answer) return;
     q1Answer = answer; // save locally
     // Show Q2
+    clearDraft(1);
     document.getElementById('q1-section').style.display = 'none';
     document.getElementById('q2-section').style.display = 'block';
+    setupAutoSave(2);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
@@ -655,8 +738,10 @@ var SURVEY_HOST = 'https://psystudy2026.github.io/privatepractice';
     document.getElementById('submit-error-2').style.display = 'none';
     q2Answer = answer2;
     // Show Q3 (no server call yet - will submit all at once)
+    clearDraft(2);
     document.getElementById('q2-section').style.display = 'none';
     document.getElementById('q3-section').style.display = 'block';
+    setupAutoSave(3);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (false) {
       document.getElementById('submit-error-2').textContent = e.message || '提交失败，请重试。';
