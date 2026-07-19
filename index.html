@@ -495,22 +495,36 @@
         </div>
         <p style="margin-top:0.75rem;font-size:0.72rem;color:#8a8a7a;font-family:'Courier New',monospace;">本回馈由 AI 生成，仅供参考，不构成临床诊断。</p>
         <div style="margin-top:1rem;padding-top:0.75rem;border-top:1px solid #e8e4dc;">
-          <p style="font-size:0.82rem;color:#3a3a2a;margin-bottom:0.5rem;">如果您觉得这份问卷有意思，欢迎分享给认识的同行：</p>
-          <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
-            <select id="poster-style-select" onchange="updatePosterPreview()" style="padding:0.45rem 0.6rem;border:1px solid #d8d4c8;border-radius:2px;font-size:0.75rem;font-family:'Courier New',monospace;color:#3a3a2a;background:white;cursor:pointer;">
-              <option value="1">海报 1</option>
-              <option value="4">海报 2</option>
-              <option value="5">海报 3</option>
-              <option value="6">海报 4</option>
-            </select>
-          </div>
-          <!-- Poster preview -->
-          <div style="margin-top:0.75rem;display:flex;align-items:flex-end;gap:0.75rem;flex-wrap:wrap;">
-            <img id="poster-preview-img" src="posters/poster-1-lonely.jpg" alt="海报预览" style="width:108px;height:192px;object-fit:cover;border-radius:2px;border:1px solid #d8d4c8;display:block;flex-shrink:0;" />
-            <button id="share-poster-btn" onclick="generateSharePoster()" style="padding:0.5rem 1rem;background:white;border:1px solid #8aaa6a;border-radius:2px;font-size:0.78rem;font-family:'Courier New',monospace;cursor:pointer;color:#2d5a2d;display:inline-flex;align-items:center;gap:0.4rem;align-self:flex-end;">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-              生成分享海报
-            </button>
+          <p style="font-size:0.82rem;color:#3a3a2a;margin-bottom:0.75rem;">如果您觉得这份问卷有意思，欢迎分享给认识的同行：</p>
+          <!-- 新版白底二维码海报 + 复制文案 -->
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:flex-start;">
+            <div style="flex-shrink:0;">
+              <img src="posters/poster-qr-white.jpg" alt="分享海报" style="width:120px;border-radius:2px;border:1px solid #d8d4c8;display:block;" />
+              <a href="posters/poster-qr-white.jpg" download="私人执业咨询师成长研究_分享海报.jpg" style="display:block;margin-top:0.4rem;text-align:center;font-size:0.72rem;font-family:'Courier New',monospace;color:#2d5a2d;text-decoration:underline;cursor:pointer;">下载海报</a>
+            </div>
+            <div style="flex:1;min-width:180px;">
+              <p style="font-size:0.78rem;color:#5a5a4a;font-family:'Courier New',monospace;margin-bottom:0.5rem;">配套分享文案（可直接复制）：</p>
+              <div id="share-copytext" style="font-size:0.75rem;line-height:1.7;color:#3a3a2a;font-family:Georgia,serif;background:#f5f3ee;border:1px solid #d8d4c8;border-radius:2px;padding:0.6rem 0.75rem;max-height:140px;overflow-y:auto;">心理咨询师私人执业，很多时候是一个人在摸索自己的执业方式。
+
+分享一个刚出炉的问卷，核心是通过你的真实执业经历，帮你看清自己目前的执业状态。填写完成后，AI 会根据你的回答生成一份专属的「执业画像」，包含：
+
+· 你的执业类型（共 16 种）和背后的运行模式
+· 你的执业风格分析——了解自己是什么风格的咨询师
+· 基于你真实回答的个性化分析，不是通用建议
+
+使用方式：点击下方链接，填写基本信息（约 5 分钟）+ 三道开放式问答（约 15–20 分钟）。完全匿名，填完即可收到画像。
+
+https://psystudy2026.github.io/privatepractice/?t=W2PDZrhzme
+
+如果你最近在想「我到底是什么风格的咨询师」「我的执业状态正常吗」，这个问卷可能会给你一个有意思的视角。
+
+欢迎大家填完之后分享自己的类型，看看同行们的状态分布。</div>
+              <button onclick="(function(){
+                var t = document.getElementById('share-copytext').innerText;
+                if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){var b=event.target;b.textContent='已复制✓';setTimeout(function(){b.textContent='复制文案';},2000);});}
+                else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);var b=event.target;b.textContent='已复制✓';setTimeout(function(){b.textContent='复制文案';},2000);}
+              })()" style="margin-top:0.5rem;padding:0.4rem 0.875rem;background:white;border:1px solid #8aaa6a;border-radius:2px;font-size:0.75rem;font-family:'Courier New',monospace;cursor:pointer;color:#2d5a2d;width:100%;">复制文案</button>
+            </div>
           </div>
         </div>
       </div>
