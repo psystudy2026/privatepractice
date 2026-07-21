@@ -52,6 +52,22 @@
     .tag-btn.active { background: var(--green); color: white; border-color: var(--green); }
     .no-results { text-align: center; padding: 3rem 1rem; color: #8a8a7a; font-family: var(--font-mono); font-size: 0.75rem; }
 
+    /* Tags display */
+    .post-tags { display: flex; gap: 0.35rem; flex-wrap: wrap; padding: 0.5rem 0.75rem; border-top: 1px solid var(--border); background: #faf9f6; }
+    .post-tag { padding: 0.15rem 0.5rem; background: var(--green-light); border: 1px solid var(--green-border); border-radius: 10px; font-family: var(--font-mono); font-size: 0.6rem; color: var(--green); }
+    .post-tag-ai { opacity: 0.7; }
+    .tag-edit-btn { padding: 0.15rem 0.5rem; background: transparent; border: 1px dashed var(--border); border-radius: 10px; font-family: var(--font-mono); font-size: 0.6rem; color: #8a8a7a; cursor: pointer; }
+    .tag-edit-btn:hover { border-color: var(--green-border); color: var(--green); }
+    /* Tag edit panel */
+    .tag-edit-panel { display: none; padding: 0.75rem; background: white; border: 1px solid var(--green-border); border-radius: 4px; margin: 0.5rem 0.75rem; }
+    .tag-edit-panel.open { display: block; }
+    .tag-edit-title { font-family: var(--font-mono); font-size: 0.65rem; color: var(--green); margin-bottom: 0.5rem; letter-spacing: 0.04em; }
+    .tag-checkboxes { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+    .tag-checkbox-label { display: flex; align-items: center; gap: 0.3rem; font-family: var(--font-mono); font-size: 0.68rem; color: #3a3a2a; cursor: pointer; padding: 0.2rem 0.5rem; border: 1px solid var(--border); border-radius: 10px; }
+    .tag-checkbox-label:has(input:checked) { background: var(--green-light); border-color: var(--green-border); color: var(--green); }
+    .tag-save-btn { padding: 0.3rem 0.875rem; background: var(--green); color: white; border: none; border-radius: 2px; font-family: var(--font-mono); font-size: 0.68rem; cursor: pointer; }
+    .tag-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
     /* Two-column header */
     .col-header-row {
       display: grid;
@@ -318,9 +334,42 @@ async function submitComment(postId) {
   }
 }
 
+var ALL_TAGS = ['来访', '收入', '督导', '身份', '倦怠', '边界'];
+var forumPassword = '';
+
 function buildRowHtml(post, index) {
   var pid = post.id;
   var parts = splitAnswer(post.answer);
+  var tags = post.tags || [];
+
+  // Tags display row
+  var tagsHtml = '<div class="post-tags" id="tags-display-' + pid + '">';
+  if (tags.length > 0) {
+    tags.forEach(function(t) { tagsHtml += '<span class="post-tag">' + escapeHtml(t) + '</span>'; });
+  } else {
+    tagsHtml += '<span style="font-family:var(--font-mono);font-size:0.6rem;color:#aaa;">AI 标签生成中……</span>';
+  }
+  if (isAdmin) {
+    tagsHtml += '<button class="tag-edit-btn" onclick="toggleTagEdit(' + pid + ')">✓ 编辑标签</button>';
+  }
+  tagsHtml += '</div>';
+
+  // Tag edit panel (admin only)
+  var tagEditHtml = '';
+  if (isAdmin) {
+    var checkboxes = ALL_TAGS.map(function(t) {
+      var checked = tags.indexOf(t) >= 0 ? 'checked' : '';
+      return '<label class="tag-checkbox-label"><input type="checkbox" value="' + t + '" ' + checked + ' onchange="syncTagCheckboxes(' + pid + ')" />' + t + '</label>';
+    }).join('');
+    tagEditHtml =
+      '<div class="tag-edit-panel" id="tag-edit-' + pid + '">' +
+        '<div class="tag-edit-title">选择标签（1–6个）</div>' +
+        '<div class="tag-checkboxes" id="tag-checkboxes-' + pid + '">' + checkboxes + '</div>' +
+        '<button class="tag-save-btn" id="tag-save-btn-' + pid + '" onclick="saveTagEdit(' + pid + ')">保存标签</button>' +
+        '<span id="tag-save-status-' + pid + '" style="margin-left:0.75rem;font-family:var(--font-mono);font-size:0.65rem;color:var(--green);"></span>' +
+      '</div>';
+  }
+
   var headerHtml =
     '<div class="cell-header">' +
       '<span class="cell-num">#' + String(index + 1).padStart(2, '0') + '</span>' +
@@ -333,6 +382,8 @@ function buildRowHtml(post, index) {
     '<div class="cell" id="post-' + pid + '">' +
       headerHtml +
       '<div class="cell-body">' + escapeHtml(parts.step1) + '</div>' +
+      tagsHtml +
+      tagEditHtml +
     '</div>';
 
   var cell2Html =
@@ -456,9 +507,52 @@ async function verifyPassword() {
 
 function showForum() {
   isAdmin = true;
+  // Store password for tag edit API calls
+  forumPassword = document.getElementById('pw-input') ? document.getElementById('pw-input').value.trim() : '';
   document.getElementById('gate-page').style.display = 'none';
   document.getElementById('forum-page').style.display = 'block';
   loadPosts();
+}
+
+function toggleTagEdit(pid) {
+  var panel = document.getElementById('tag-edit-' + pid);
+  if (panel) panel.classList.toggle('open');
+}
+
+function syncTagCheckboxes(pid) {
+  // No-op: checkboxes are read at save time
+}
+
+async function saveTagEdit(pid) {
+  var checkboxes = document.querySelectorAll('#tag-checkboxes-' + pid + ' input[type=checkbox]');
+  var selected = [];
+  checkboxes.forEach(function(cb) { if (cb.checked) selected.push(cb.value); });
+  var btn = document.getElementById('tag-save-btn-' + pid);
+  var status = document.getElementById('tag-save-status-' + pid);
+  btn.disabled = true;
+  btn.textContent = '保存中……';
+  try {
+    await trpcMutate('forum.updateTags', { responseId: pid, tags: selected, password: forumPassword });
+    // Update display
+    var displayEl = document.getElementById('tags-display-' + pid);
+    if (displayEl) {
+      var newHtml = selected.length > 0
+        ? selected.map(function(t) { return '<span class="post-tag">' + escapeHtml(t) + '</span>'; }).join('')
+        : '<span style="font-family:var(--font-mono);font-size:0.6rem;color:#aaa;">无标签</span>';
+      newHtml += '<button class="tag-edit-btn" onclick="toggleTagEdit(' + pid + ')">✓ 编辑标签</button>';
+      displayEl.innerHTML = newHtml;
+    }
+    // Update in allPosts cache
+    var postIdx = allPosts.findIndex(function(p) { return p.id === pid; });
+    if (postIdx >= 0) allPosts[postIdx].tags = selected;
+    if (status) { status.textContent = '已保存 ✓'; setTimeout(function() { if (status) status.textContent = ''; }, 2000); }
+    var panel = document.getElementById('tag-edit-' + pid);
+    if (panel) panel.classList.remove('open');
+  } catch(e) {
+    if (status) status.textContent = '保存失败：' + (e.message || '请重试');
+  }
+  btn.disabled = false;
+  btn.textContent = '保存标签';
 }
 
 async function deletePost(pid) {
