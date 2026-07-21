@@ -390,8 +390,17 @@ function renderFiltered() {
   var countEl = document.getElementById('post-count');
   var keyword = (document.getElementById('search-input') ? document.getElementById('search-input').value.trim().toLowerCase() : '');
   var filtered = allPosts.filter(function(p) {
+    // Use AI-generated tags if available, fall back to keyword matching
+    var matchTag = activeTag === 'all';
+    if (!matchTag) {
+      if (p.tags && p.tags.length > 0) {
+        matchTag = p.tags.indexOf(activeTag) >= 0;
+      } else {
+        // Fallback: keyword match while AI tags are being generated
+        matchTag = (p.answer || '').toLowerCase().indexOf(activeTag) >= 0;
+      }
+    }
     var text = (p.answer || '').toLowerCase();
-    var matchTag = activeTag === 'all' || text.indexOf(activeTag) >= 0;
     var matchSearch = !keyword || text.indexOf(keyword) >= 0;
     return matchTag && matchSearch;
   });
