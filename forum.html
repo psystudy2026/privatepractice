@@ -37,7 +37,20 @@
 
     /* Forum content */
     #forum-page { display: none; }
-    .post-count { font-family: var(--font-mono); font-size: 0.72rem; color: var(--green-mid); margin-bottom: 1.5rem; letter-spacing: 0.05em; }
+    .post-count { font-family: var(--font-mono); font-size: 0.72rem; color: var(--green-mid); margin-bottom: 1rem; letter-spacing: 0.05em; }
+
+    /* Search & filter toolbar */
+    .search-bar { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+    .search-input { flex: 1; min-width: 200px; padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: 2px; font-family: var(--font-serif); font-size: 0.875rem; outline: none; background: white; }
+    .search-input:focus { border-color: var(--green-border); }
+    .search-clear { padding: 0.5rem 0.75rem; background: transparent; border: 1px solid var(--border); border-radius: 2px; font-family: var(--font-mono); font-size: 0.72rem; cursor: pointer; color: #6a6a5a; white-space: nowrap; }
+    .search-clear:hover { border-color: var(--green-border); color: var(--green); }
+    .tag-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; align-items: center; }
+    .tag-label { font-family: var(--font-mono); font-size: 0.65rem; color: #8a8a7a; letter-spacing: 0.05em; margin-right: 0.25rem; }
+    .tag-btn { padding: 0.25rem 0.75rem; border: 1px solid var(--border); border-radius: 12px; font-family: var(--font-mono); font-size: 0.65rem; cursor: pointer; background: white; color: #5a5a4a; transition: all 0.15s; }
+    .tag-btn:hover { border-color: var(--green-border); color: var(--green); }
+    .tag-btn.active { background: var(--green); color: white; border-color: var(--green); }
+    .no-results { text-align: center; padding: 3rem 1rem; color: #8a8a7a; font-family: var(--font-mono); font-size: 0.75rem; }
 
     /* Two-column header */
     .col-header-row {
@@ -168,6 +181,22 @@
     <h1>执业困境共享</h1>
     <p class="subtitle">以下内容由参与研究的咨询师自愿分享，经匿名处理后展示。左栏为执业困境描述，右栏为对那段经历的反思。每行为同一位受试者的两部分回答。<br>您也可以在每条分享下方留言，分享您的共鸣或感受（留言将在审核后显示）。</p>
     <div id="post-count" class="post-count"></div>
+
+    <!-- Search & filter toolbar -->
+    <div class="search-bar">
+      <input id="search-input" class="search-input" type="text" placeholder="搜索关键词（如：来访者、督导、收入……）" oninput="filterPosts()" />
+      <button class="search-clear" onclick="clearSearch()">清空</button>
+    </div>
+    <div class="tag-bar">
+      <span class="tag-label">困境主题：</span>
+      <button class="tag-btn active" data-tag="all" onclick="selectTag(this)">全部</button>
+      <button class="tag-btn" data-tag="来访" onclick="selectTag(this)">来访相关</button>
+      <button class="tag-btn" data-tag="收入" onclick="selectTag(this)">收入/获客</button>
+      <button class="tag-btn" data-tag="督导" onclick="selectTag(this)">督导/体验</button>
+      <button class="tag-btn" data-tag="身份" onclick="selectTag(this)">职业身份</button>
+      <button class="tag-btn" data-tag="倦怠" onclick="selectTag(this)">倦怠/疲惫</button>
+      <button class="tag-btn" data-tag="边界" onclick="selectTag(this)">边界/关系</button>
+    </div>
 
     <!-- Column headers -->
     <div class="col-header-row">
@@ -336,6 +365,9 @@ function buildRowHtml(post, index) {
          '<div class="respondent-row">' + commentsHtml + '</div>';
 }
 
+var allPosts = [];
+var activeTag = 'all';
+
 async function loadPosts() {
   var grid = document.getElementById('posts-grid');
   var countEl = document.getElementById('post-count');
@@ -346,12 +378,46 @@ async function loadPosts() {
       countEl.textContent = '共 0 篇分享';
       return;
     }
-    countEl.textContent = '共 ' + posts.length + ' 位受试者的分享（均来自阶段01：执业困境描述）';
-    grid.innerHTML = posts.map(function(p, i) { return buildRowHtml(p, i); }).join('');
-    posts.forEach(function(p) { loadComments(p.id); });
+    allPosts = posts;
+    renderFiltered();
   } catch(e) {
     grid.innerHTML = '<div class="empty-state">加载失败，请刷新重试。</div>';
   }
+}
+
+function renderFiltered() {
+  var grid = document.getElementById('posts-grid');
+  var countEl = document.getElementById('post-count');
+  var keyword = (document.getElementById('search-input') ? document.getElementById('search-input').value.trim().toLowerCase() : '');
+  var filtered = allPosts.filter(function(p) {
+    var text = (p.answer || '').toLowerCase();
+    var matchTag = activeTag === 'all' || text.indexOf(activeTag) >= 0;
+    var matchSearch = !keyword || text.indexOf(keyword) >= 0;
+    return matchTag && matchSearch;
+  });
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="no-results">没有匹配的内容，试试其他关键词或标签。</div>';
+    countEl.textContent = '共 ' + allPosts.length + ' 篇分享，当前显示 ' + filtered.length + ' 篇';
+    return;
+  }
+  countEl.textContent = '共 ' + allPosts.length + ' 篇分享' + (filtered.length < allPosts.length ? '，当前显示 ' + filtered.length + ' 篇' : '（均来自阶段01：执业困境描述）');
+  grid.innerHTML = filtered.map(function(p, i) { return buildRowHtml(p, i); }).join('');
+  filtered.forEach(function(p) { loadComments(p.id); });
+}
+
+function filterPosts() { renderFiltered(); }
+
+function selectTag(btn) {
+  document.querySelectorAll('.tag-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  activeTag = btn.getAttribute('data-tag');
+  renderFiltered();
+}
+
+function clearSearch() {
+  var inp = document.getElementById('search-input');
+  if (inp) inp.value = '';
+  renderFiltered();
 }
 
 async function verifyPassword() {
